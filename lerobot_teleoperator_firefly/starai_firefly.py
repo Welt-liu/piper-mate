@@ -45,6 +45,25 @@ class Firefly(Teleoperator):
         self.joint_dir["Joint_6"] = self.config.joint_dir[5]
         self.joint_dir["Gripper"] = 2
 
+        self.angle_min ={}
+        self.angle_min["Joint_1"] = self.config.angle_min[0]
+        self.angle_min["Joint_2"] = self.config.angle_min[1]
+        self.angle_min["Joint_3"] = self.config.angle_min[2]
+        self.angle_min["Joint_4"] = self.config.angle_min[3]
+        self.angle_min["Joint_5"] = self.config.angle_min[4]
+        self.angle_min["Joint_6"] = self.config.angle_min[5]
+        self.angle_min["Gripper"] = self.config.angle_min[6]
+
+        self.angle_max ={}
+        self.angle_max["Joint_1"] = self.config.angle_max[0]
+        self.angle_max["Joint_2"] = self.config.angle_max[1]
+        self.angle_max["Joint_3"] = self.config.angle_max[2]
+        self.angle_max["Joint_4"] = self.config.angle_max[3]
+        self.angle_max["Joint_5"] = self.config.angle_max[4]
+        self.angle_max["Joint_6"] = self.config.angle_max[5]
+        self.angle_max["Gripper"] = self.config.angle_max[6]
+
+
     @property
     def action_features(self) -> dict[str, type]:
         return {f"{motor}.pos": float for motor in self.motors}
@@ -79,54 +98,32 @@ class Firefly(Teleoperator):
 
     def calibrate(self) -> None:
         pass
-        # if self.calibration:
-        #     # Calibration file exists, ask user whether to use it or run new calibration
-        #     user_input = input(
-        #         f"Press ENTER to use provided calibration file associated with the id {self.id}, or type 'c' and press ENTER to run calibration: "
-        #     )
-        #     if user_input.strip().lower() != "c":
-        #         logger.info(f"Writing calibration file associated with the id {self.id} to the motors")
-        #         self.bus.write_calibration(self.calibration)
-        #         return
-        # self.bus.disable_torque(mode="unlocked")
-        # logger.info(f"\nRunning calibration of {self}")
-        # # self.bus.disable_torque()
-        # # for motor in self.bus.motors:
-        # #     self.bus.write("Operating_Mode", motor, OperatingMode.POSITION.value)
-
-        # # input(f"Move {self} to the middle of its range of motion and press ENTER....")
-        # homing_offsets = self.bus.set_half_turn_homings()
-
-        # print(
-        #     "Move all joints sequentially through their entire ranges "
-        #     "of motion.\nRecording positions. Press ENTER to stop..."
-        # )
-        # range_mins, range_maxes = self.bus.record_ranges_of_motion()
-
-        # self.calibration = {}
-        # for motor, m in self.bus.motors.items():
-        #     self.calibration[motor] = MotorCalibration(
-        #         id=m.id,
-        #         drive_mode=0,
-        #         homing_offset=homing_offsets[motor],
-        #         range_min=range_mins[motor],
-        #         range_max=range_maxes[motor],
-        #     )
-
-        # self.bus.write_calibration(self.calibration)
-        # self._save_calibration()
-        # print(f"Calibration saved to {self.calibration_fpath}")
 
     def configure(self) -> None:
         pass
+
+    def clamp(self,value, min_val, max_val):
+        """
+        将 value 限制在 [min_val, max_val] 范围内。
+
+        Args:
+            value (float or int): 待限幅的值。
+            min_val (float or int): 最小允许值。
+            max_val (float or int): 最大允许值。
+
+        Returns:
+            float or int: 限幅后的值。
+        """
+        return max(min_val, min(value, max_val))
+
 
     def get_action(self) -> dict[str, float]:
         start = time.perf_counter()
 
         monitor_data: dict[str, Monitor_data]= self.porthandler.sync_read["Monitor"](self.motors)
         
+        action = {f"{motor}.pos": self.clamp(val.current_position * self.joint_dir[motor],self.angle_min[motor],self.angle_max[motor]) for motor, val in monitor_data.items()}
 
-        action = {f"{motor}.pos": (val.current_position * self.joint_dir[motor]) for motor, val in monitor_data.items()}
         dt_ms = (time.perf_counter() - start) * 1e3
         logger.debug(f"{self} read action: {dt_ms:.1f}ms")
         return action
@@ -152,22 +149,3 @@ class Firefly(Teleoperator):
         self.bus.sync_write("Goal_Position", goal_pos)
         return {f"{motor}.pos": val for motor, val in goal_pos.items()}
     
-    # def move_to_initial_position(self)-> dict[str, Any]:
-    #     postion = self.get_action()
-
-
-    #     # if not self.is_connected:
-    #     #     raise DeviceNotConnectedError(f"{self} is not connected.")
-    #     goal_pos = {}
-    #     goal_pos = {key.removesuffix(".pos"): val for key, val in postion.items() if key.endswith(".pos")}
-    #     goal_pos["Motor_0"] = 0
-    #     goal_pos["Motor_1"] = -100
-    #     goal_pos["Motor_2"] = 60
-    #     goal_pos["Motor_3"] = 0
-    #     goal_pos["Motor_4"] = 30
-    #     goal_pos["Motor_5"] = 0
-    #     goal_pos["gripper"] = 50
-    #     self.bus.sync_write("Goal_Position", goal_pos,motion_time = 1500)
-    #     time.sleep(1.5)
-    #     self.bus.disable_torque(motors = "gripper",mode = "unlocked")
-    #     return {f"{motor}.pos": val for motor, val in goal_pos.items()}
