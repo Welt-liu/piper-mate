@@ -273,7 +273,6 @@ lerobot-teleoperate \
     --teleop.type=lerobot_teleoperator_firefly \
     --teleop.port=/dev/ttyUSB0 \
     --teleop.id=my_awesome_staraifirefly_arm
-
 ```
 
 远程操作命令将自动检测下列参数:
@@ -356,13 +355,13 @@ https://github.com/user-attachments/assets/8bb25714-783a-4f29-83dd-58b457aed80c
 
 ```bash
 lerobot-record \
-    --robot.type=lerobot_robot_viola \
-    --robot.port=/dev/ttyUSB1 \
-    --robot.id=my_awesome_staraiviola_arm \
+    --robot.type=lerobot_robot_piper \
+    --robot.can_name=can0 \
+    --robot.id=my_awesome_staraipiper_arm \
     --robot.cameras="{ up: {type: opencv, index_or_path: /dev/video2, width: 640, height: 480, fps: 30},front: {type: opencv, index_or_path: /dev/video4, width: 640, height: 480, fps: 30}}" \
-    --teleop.type=lerobot_teleoperator_violin \
+    --teleop.type=lerobot_teleoperator_firefly \
     --teleop.port=/dev/ttyUSB0 \
-    --teleop.id=my_awesome_staraiviolin_arm \
+    --teleop.id=my_awesome_staraifirefly_arm \
     --display_data=true \
     --dataset.repo_id=starai/record-test \
     --dataset.episode_time_s=30 \
@@ -414,9 +413,9 @@ lerobot-record \
 
 ```bash
 lerobot-replay \
-    --robot.type=lerobot_robot_viola \
-    --robot.port=/dev/ttyUSB1 \
-    --robot.id=my_awesome_staraiviola_arm \
+    --robot.type=lerobot_robot_piper \
+    --robot.can_name=can0 \
+    --robot.id=my_awesome_staraipiper_arm \
     --dataset.repo_id=starai/record-test \
     --dataset.episode=1 # choose the episode you want to replay
 ```
