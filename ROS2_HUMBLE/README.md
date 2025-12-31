@@ -76,13 +76,18 @@ ros2 run star_piper driver --ros-args -p port:=/dev/ttyUSB0 -p auto_enable:=fals
 
 ### 终端2：配置和启动CAN接口
 
+#### 单CAN设备配置
+
 ```bash
-source install/setup.bash
 # 1. 查找所有CAN端口
 bash find_all_can_port.sh
 # 2. 激活can0接口（波特率1000000）
 bash can_activate.sh can0 1000000
-# 3. 启动piper控制节点
+```
+
+```bash
+cd ROS2_HUMBLE
+source install/setup.bash
 ros2 run piper piper_single_ctrl --ros-args -p can_port:=can0 -p auto_enable:=true -p gripper_exist:=true -p gripper_val_mutiple:=2
 ```
 

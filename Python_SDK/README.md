@@ -61,7 +61,7 @@ bash can_activate.sh can0 1000000
 ### 2. 运行主程序
 
 ```bash
-python3 fashionstar_agilex.py
+python3 ./Python_SDK/fashionstar_agilex.py
 ```
 
 ### 3. 参数配置
