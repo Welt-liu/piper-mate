@@ -128,10 +128,8 @@ For Ubuntu X86:
 5. Install Motor Dependencies:
 
      ```bash
-    pip install lerobot_teleoperator_firefly    # Install firefly via pip
+    pip install lerobot_teleoperator_pipermate    # Install pipermate via pip
     pip install lerobot_robot_piper    # Install piper via pip
-    pip install python-can
-    pip install piper_sdk
     sudo apt update && sudo apt install can-utils ethtool
     ```
 
@@ -263,10 +261,10 @@ Then you are ready to teleoperate your robot (It won't display the cameras)! Run
 lerobot-teleoperate \
     --robot.type=lerobot_robot_piper \
     --robot.can_name=can0 \
-    --robot.id=my_awesome_staraipiper_arm \
-    --teleop.type=lerobot_teleoperator_firefly \
+    --robot.id=my_awesome_piper_arm \
+    --teleop.type=lerobot_teleoperator_pipermate \
     --teleop.port=/dev/ttyUSB0 \
-    --teleop.id=my_awesome_staraifirefly_arm
+    --teleop.id=my_awesome_pipermate_arm
 ```
 
 After the program starts, the Hover Lock Technology remains functional.
@@ -318,11 +316,11 @@ After confirming that the external camera is connected, replace the camera infor
 lerobot-teleoperate \
     --robot.type=lerobot_robot_piper \
     --robot.can_name=can0 \
-    --robot.id=my_awesome_staraipiper_arm \
+    --robot.id=my_awesome_piper_arm \
     --robot.cameras="{ front: {type: opencv, index_or_path: 2, width: 640, height: 480, fps: 30}}" \
-    --teleop.type=lerobot_teleoperator_firefly \
+    --teleop.type=lerobot_teleoperator_pipermate \
     --teleop.port=/dev/ttyUSB0 \
-    --teleop.id=my_awesome_staraifirefly_arm \
+    --teleop.id=my_awesome_pipermate_arm \
     --display_data=true
 ```
 
@@ -346,11 +344,11 @@ Record 10 episodes.
 lerobot-record \
     --robot.type=lerobot_robot_piper \
     --robot.can_name=can0 \
-    --robot.id=my_awesome_staraipiper_arm \
-    --robot.cameras="{ up: {type: opencv, index_or_path: /dev/video2, width: 640, height: 480, fps: 30},front: {type: opencv, index_or_path: /dev/video4, width: 640, height: 480, fps: 30}}" \
-    --teleop.type=lerobot_teleoperator_firefly \
+    --robot.id=my_awesome_piper_arm \
+    --robot.cameras="{ up: {type: opencv, index_or_path: /dev/video0, width: 640, height: 480, fps: 30},front: {type: opencv, index_or_path: /dev/video4, width: 640, height: 480, fps: 30}}" \
+    --teleop.type=lerobot_teleoperator_pipermate \
     --teleop.port=/dev/ttyUSB0 \
-    --teleop.id=my_awesome_staraifirefly_arm \
+    --teleop.id=my_awesome_pipermate_arm \
     --display_data=true \
     --dataset.repo_id=starai/record-test \
     --dataset.episode_time_s=30 \
@@ -366,7 +364,7 @@ lerobot-record \
 lerobot-replay \
     --robot.type=lerobot_robot_piper \
     --robot.can_name=can0 \
-    --robot.id=my_awesome_staraipiper_arm \
+    --robot.id=my_awesome_piper_arm \
     --dataset.repo_id=starai/record-test \
     --dataset.episode=1 # choose the episode you want to replay
 ```
@@ -402,7 +400,7 @@ Run the following command to record 10 evaluation episodes:
 lerobot-record  \
   --robot.type=lerobot_robot_piper \
   --robot.can_name=can0 \
-  --robot.id=my_awesome_staraipiper_arm \
+  --robot.id=my_awesome_piper_arm \
   --robot.cameras="{ up: {type: opencv, index_or_path: /dev/video2, width: 640, height: 480, fps: 30},front: {type: opencv, index_or_path: /dev/video4, width: 640, height: 480, fps: 30}}" \
   --display_data=false \
   --dataset.repo_id=starai/eval_record-test \
